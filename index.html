@@ -1024,6 +1024,7 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     const wrap = document.querySelector('.hw-viewer');
@@ -1145,7 +1146,11 @@
         return n.name;
     }
 
-    new GLTFLoader().load('models/backpack.glb', gltf => {
+    const backpackDraco = new DRACOLoader();
+    backpackDraco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/draco/gltf/');
+    const backpackLoader = new GLTFLoader();
+    backpackLoader.setDRACOLoader(backpackDraco);
+    backpackLoader.load('models/backpack.glb', gltf => {
         scene.add(gltf.scene);
         // First pass: register every node whose name is in OFFSETS directly.
         gltf.scene.traverse(obj => {
@@ -1417,6 +1422,7 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GLTFLoader }    from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader }   from 'three/addons/loaders/DRACOLoader.js';
 
     const canvas = document.getElementById('arm-canvas');
     if (!canvas) throw new Error('no arm-canvas');
@@ -1498,6 +1504,9 @@
 
     let active = 'arx', busy = false;
     const gltfLoader = new GLTFLoader();
+    const armDraco = new DRACOLoader();
+    armDraco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/libs/draco/gltf/');
+    gltfLoader.setDRACOLoader(armDraco);
 
     function setOpacity(root, op) {
         root.traverse(c => { if (c.isMesh) { c.material.transparent = op < 1; c.material.opacity = op; } });
