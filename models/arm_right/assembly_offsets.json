@@ -1,0 +1,114 @@
+[
+  {
+    "id": 0,
+    "stem": "mount",
+    "label": "Shoulder Mount",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  },
+  {
+    "id": 1,
+    "stem": "link1",
+    "label": "Link 1",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  },
+  {
+    "id": 2,
+    "stem": "link2",
+    "label": "Link 2",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  },
+  {
+    "id": 3,
+    "stem": "link3",
+    "label": "Link 3",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  },
+  {
+    "id": 4,
+    "stem": "link4",
+    "label": "Link 4",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  },
+  {
+    "id": 5,
+    "stem": "link5",
+    "label": "Link 5",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  },
+  {
+    "id": 6,
+    "stem": "gripper",
+    "label": "Gripper",
+    "assembled_pos": [
+      0,
+      0,
+      0
+    ],
+    "drop_offset": [
+      0,
+      800,
+      0
+    ],
+    "color": "#ffffff"
+  }
+]

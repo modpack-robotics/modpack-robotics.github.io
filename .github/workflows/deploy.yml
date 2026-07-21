@@ -1,0 +1,76 @@
+name: Deploy site + docs to Pages
+
+# Publishes the combined site to GitHub Pages:
+#   /        -> landing page (index.html + assets/, images/, models/)
+#   /docs/   -> MkDocs-built HTML (mkdocs builds source docs/*.md into site/docs)
+#
+# DORMANT until Pages "Source" is set to "GitHub Actions" on the public repo
+# (Settings -> Pages -> Build and deployment -> Source: GitHub Actions). Deploying via the
+# Pages artifact service adds no commits and no contributors, keeping history anonymous.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # Only publish from the anonymous public repo; skip on the private dev fork so it
+    # doesn't produce failing runs where Pages isn't configured.
+    if: github.repository == 'modpack-robotics/modpack-robotics.github.io'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-docs.txt
+
+      - name: Install docs dependencies
+        run: pip install -r requirements-docs.txt
+
+      - name: Build docs (mkdocs -> site/docs)
+        run: mkdocs build --strict
+
+      - name: Assemble publish directory
+        run: |
+          set -euo pipefail
+          rm -rf _publish
+          mkdir -p _publish
+          # Landing page + static assets. Exclude the markdown source docs/ (served built,
+          # below), the mkdocs build dir, CI, vcs, and node_modules.
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='site' \
+            --exclude='docs' \
+            --exclude='_publish' \
+            ./ _publish/
+          # Built docs HTML served at /docs/
+          cp -r site/docs _publish/docs
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _publish
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

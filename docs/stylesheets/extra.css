@@ -1,0 +1,220 @@
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Full-width tables */
+.md-typeset__scrollwrap {
+  margin: 0;
+}
+
+.md-typeset__scrollwrap .md-typeset__table {
+  width: 100%;
+}
+
+.md-typeset__scrollwrap .md-typeset__table table {
+  width: 100%;
+  display: table;
+}
+
+/* BOM component thumbnails */
+.bom-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.bom-item img {
+  width: 75px;
+  object-fit: contain;
+}
+
+.bom-table table img {
+  width: 75px;
+}
+
+.bom-item.bom-item-lg img {
+  width: 120px;
+}
+
+.bom-item.bom-item-stl img {
+  width: 95px;
+}
+
+.bom-item span small {
+  display: block;
+  font-size: 0.9em;
+  color: #888;
+  line-height: 1.2;
+}
+
+.stl-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1em;
+  margin: 1em 0;
+}
+
+.stl-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 0.75em 0.5em 0.6em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.stl-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.stl-card-name {
+  font-size: 0.82em;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.3;
+}
+
+.stl-card-links {
+  font-size: 0.78em;
+  display: flex;
+  gap: 6px;
+}
+
+.stl-card-links a {
+  color: #8C00FF;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.stl-card-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+  .stl-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.nav-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+  margin: 1.5em 0;
+}
+
+.nav-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 1.25em 1em;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.nav-card:hover {
+  border-color: #8C00FF;
+  text-decoration: none;
+}
+
+.nav-card-title {
+  font-size: 1em;
+  font-weight: 600;
+  color: #8C00FF;
+}
+
+.nav-card-desc {
+  font-size: 0.85em;
+  color: #555;
+  line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+  .nav-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+.slideshow {
+  position: relative;
+  text-align: center;
+  margin: 1.5em 0;
+}
+
+.slide {
+  display: none;
+}
+
+.slide.active {
+  display: block;
+}
+
+.slide img {
+  max-width: 100%;
+}
+
+.slide-label {
+  font-size: 1em;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  color: #333;
+}
+
+.slide-label small {
+  font-size: 0.8em;
+  font-weight: 400;
+  color: #888;
+}
+
+.slide-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  margin-top: 0.75em;
+}
+
+.slide-prev,
+.slide-next {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-size: 1.1em;
+  cursor: pointer;
+  color: #8C00FF;
+  line-height: 1;
+}
+
+.slide-prev:hover,
+.slide-next:hover {
+  border-color: #8C00FF;
+}
+
+.slide-counter {
+  font-size: 0.85em;
+  color: #666;
+  min-width: 3em;
+}
+
+.instruction-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+  align-items: start;
+}
+
+:root {
+  --md-primary-fg-color: #8C00FF;
+  --md-primary-fg-color--light: #a840ff;
+  --md-primary-fg-color--dark: #6a00cc;
+}
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var logo = document.querySelector(".md-header__button.md-logo");
+      if (logo) {
+        logo.href = "/";
+        logo.title = "← Back to research page";
+      }
+      var title = document.querySelector(".md-header__title a");
+      if (title) {
+        title.href = "/";
+        title.title = "← Back to research page";
+      }
+    });
+  </script>
+{% endblock %}

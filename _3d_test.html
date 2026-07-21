@@ -1,0 +1,338 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Interactive Exploded View</title>
+<style>
+  body { margin:0; background:#f8f7ff; font-family:Inter,sans-serif; }
+  #canvas-wrap { position:relative; width:700px; height:700px; display:block; margin:20px auto;
+                 background:#faf7ff; border-radius:12px; overflow:hidden;
+                 box-shadow:0 2px 12px rgba(0,0,0,0.1); }
+  canvas { display:block; }
+  #label-layer { position:absolute; inset:0; pointer-events:none; }
+  .part-label {
+    position:absolute; display:flex; align-items:center; gap:5px;
+    opacity:0; transition:opacity 0.4s; pointer-events:none;
+    transform:translate(-50%,-50%);
+  }
+  .part-label.visible { opacity:1; }
+  .part-label-dot {
+    width:7px; height:7px; border-radius:50%; background:#8C00FF; flex-shrink:0;
+    box-shadow:0 0 0 2px rgba(140,0,255,0.22);
+  }
+  .part-label-text {
+    font:600 10px/1 Inter,sans-serif; color:#1a1a1a;
+    background:rgba(255,255,255,0.90); padding:3px 7px; border-radius:4px;
+    white-space:nowrap; box-shadow:0 1px 4px rgba(0,0,0,0.12);
+  }
+  #controls { text-align:center; margin:12px; }
+  button { padding:10px 28px; font:600 14px Inter,sans-serif;
+           background:#8C00FF; color:#fff; border:none; border-radius:100px; cursor:pointer; }
+  button.out { background:#fff; color:#8C00FF; border:1px solid #8C00FF; }
+  #status { font-size:12px; color:#999; margin-top:8px; }
+</style>
+</head>
+<body>
+<div id="canvas-wrap"><canvas id="c"></canvas><div id="label-layer"></div></div>
+<div id="controls">
+  <button id="btn">Explode View</button>
+  <div id="status">Loading…</div>
+</div>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+}}</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const W=700,H=700;
+const canvas=document.getElementById('c');
+canvas.width=W; canvas.height=H;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setSize(W,H);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.0;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.setClearColor(0xffffff,1);
+
+const pmrem=new THREE.PMREMGenerator(renderer);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xffffff);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.02).texture;
+pmrem.dispose();
+
+const camera=new THREE.PerspectiveCamera(28,1,1,5000);
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=true; controls.dampingFactor=0.08;
+
+// Studio lighting with shadows
+scene.add(new THREE.AmbientLight(0xffffff,0.25));
+const key=new THREE.DirectionalLight(0xffffff,3.5);
+key.position.set(300,500,400);
+key.castShadow=true;
+key.shadow.mapSize.set(2048,2048);
+key.shadow.camera.near=10; key.shadow.camera.far=3000;
+key.shadow.camera.left=-500; key.shadow.camera.right=500;
+key.shadow.camera.top=500; key.shadow.camera.bottom=-500;
+key.shadow.bias=-0.001;
+scene.add(key);
+const fill=new THREE.DirectionalLight(0xe8eeff,0.7); fill.position.set(-300,200,200); scene.add(fill);
+const rim=new THREE.DirectionalLight(0xfff8f0,0.4); rim.position.set(50,-200,-300); scene.add(rim);
+
+// Explode offsets per named node — standard directions
+// Parts and their actual separation axes based on assembled positions:
+// top_bracket (y=86,z=130), front_panel (y=86,z=-120) → both at top, separate in +Y
+// bottom_bracket (y=-90,z=130), back_panel (y=-90,z=-120) → both at bottom, separate in -Y
+// shelves (x=52-73) → separate in +X
+// main_frame (x=-8, center) → stays put
+// electronics → separate in -X
+const S=150;
+const OFFSETS={
+  top_bracket:               [0, 0,  S*2],
+  top_bracket_accessories:   [0, 0,  S*2],
+  bottom_bracket:            [0, 0,  S*2],
+  bottom_bracket_accessories:[0, 0,  S*2],
+  front_panel:               [0, 0, -S*2],
+  front_panel_accessories:   [0, 0, -S*2],
+  back_panel:                [0, 0, -S*2],
+  back_panel_accessories:    [0, 0, -S*2],
+  main_frame_shell:          [0, 0, 0],
+  main_frame_bars:           [0, 0, 0],
+  shelf_a_frame:             [S*2.5, 0, 0],
+  shelf_a_battery:           [S*3.5, 0, 0],
+  shelf_a_holder:            [S*3.0, 0, 0],
+  shelf_b_battery:           [S*3.5, 0, 0],
+  shelf_b_holder:            [S*3.0, 0, 0],
+  shelf_c_frame:             [S*2.5, 0, 0],
+  shelf_c_battery:           [S*3.5, 0, 0],
+  shelf_c_holder:            [S*3.0, 0, 0],
+  shelf_d_battery:           [S*3.5, 0, 0],
+  shelf_d_holder:            [S*3.0, 0, 0],
+  shelf_e_battery:           [S*3.5, 0, 0],
+  shelf_e_holder:            [S*3.0, 0, 0],
+  electronics:               [S*1.2, 0, 0],
+};
+
+const JADE_MAT  = new THREE.MeshStandardMaterial({color:0xe8ede4, roughness:0.82, metalness:0.0});
+const BATT_MAT  = new THREE.MeshStandardMaterial({color:0x7a7874, roughness:0.55, metalness:0.05}); // battery packs
+const HOLD_MAT  = new THREE.MeshStandardMaterial({color:0xb8b4ae, roughness:0.70, metalness:0.02}); // charger holders
+const PCB_MAT   = new THREE.MeshStandardMaterial({color:0x383836, roughness:0.45, metalness:0.08});
+const METAL_MAT = new THREE.MeshStandardMaterial({color:0x282726, roughness:0.2,  metalness:0.75});
+const FRAME_MAT = new THREE.MeshStandardMaterial({color:0x3f3d3b, roughness:0.3,  metalness:0.75});
+
+const PLA_NODES = new Set(['top_bracket','bottom_bracket','front_panel','back_panel',
+  'main_frame_shell','shelf_a_frame','shelf_c_frame','electronics']);
+const FRAME_METAL_NODES = new Set(['main_frame_bars']);
+const BATT_NODES = new Set(['shelf_a_battery','shelf_b_battery','shelf_c_battery',
+  'shelf_d_battery','shelf_e_battery']);
+const HOLD_NODES = new Set(['shelf_a_holder','shelf_b_holder','shelf_c_holder',
+  'shelf_d_holder','shelf_e_holder']);
+const PCB_NODES   = new Set(['top_bracket_accessories','front_panel_accessories',
+  'bottom_bracket_accessories']);
+const METAL_NODES = new Set(['back_panel_accessories']);
+
+const LABELS=[
+  {name:'Front Panel',               nodes:['front_panel']},
+  {name:'Back Panel',                nodes:['back_panel']},
+  {name:'Bar Bracket',               nodes:['top_bracket','bottom_bracket']},
+  {name:'Toggle Latch',              nodes:['back_panel_accessories']},
+  {name:'Mini PC Holder',            nodes:['main_frame_shell']},
+  {name:'Bar',                       nodes:['main_frame_bars']},
+  {name:'Battery Holders',           nodes:['shelf_a_holder','shelf_b_holder','shelf_c_holder','shelf_d_holder','shelf_e_holder']},
+  {name:'Battery Banks',             nodes:['shelf_a_battery','shelf_b_battery','shelf_c_battery','shelf_d_battery','shelf_e_battery']},
+  {name:'Vision Pro Charger Holder', nodes:['electronics']},
+  {name:'U2D2 Power Hub Board',      nodes:['bottom_bracket_accessories']},
+  {name:'Power Distribution Board',  nodes:['top_bracket_accessories','front_panel_accessories']},
+];
+
+const nodeMap={};
+let exploded=false, animating=false;
+let initCamPos=null, initTarget=null;
+let labelAnchors=[];
+
+
+function getNodeName(obj){
+  let n=obj;
+  while(n.parent && !OFFSETS[n.name]) n=n.parent;
+  return n.name;
+}
+
+new GLTFLoader().load('models/backpack.glb', gltf=>{
+  scene.add(gltf.scene);
+  gltf.scene.traverse(obj=>{
+    if(obj.isMesh || obj.isGroup){
+      let node=obj;
+      while(node.parent && !OFFSETS[node.name]) node=node.parent;
+      if(OFFSETS[node.name] && !nodeMap[node.name]) nodeMap[node.name]=node;
+    }
+    if(obj.isMesh){
+      const nname=getNodeName(obj);
+      if(FRAME_METAL_NODES.has(nname)) obj.material=FRAME_MAT;
+      else if(BATT_NODES.has(nname))  obj.material=BATT_MAT;
+      else if(HOLD_NODES.has(nname))  obj.material=HOLD_MAT;
+      else if(PCB_NODES.has(nname))   obj.material=PCB_MAT;
+      else if(METAL_NODES.has(nname)) obj.material=METAL_MAT;
+      else                            obj.material=JADE_MAT;
+      obj.castShadow=true;
+      obj.receiveShadow=true;
+    }
+  });
+
+  // Fit camera
+  const box=new THREE.Box3().setFromObject(gltf.scene);
+  const center=box.getCenter(new THREE.Vector3());
+  const size=box.getSize(new THREE.Vector3()).length();
+
+  // Ground plane: invisible, just catches shadows
+  const ground=new THREE.Mesh(
+    new THREE.PlaneGeometry(3000,3000),
+    new THREE.ShadowMaterial({opacity:0.12})
+  );
+  ground.rotation.x=-Math.PI/2;
+  ground.position.y=box.min.y-1;
+  ground.receiveShadow=true;
+  scene.add(ground);
+
+  // Hero angle: elevated ~30°, fit model tightly to frame
+  const dir=new THREE.Vector3(0.7,0.55,0.85).normalize();
+  const fovRad=camera.fov*Math.PI/180;
+  const dist=(size/2)/Math.tan(fovRad/2)*1.15;  // 15% padding
+  camera.position.copy(center).addScaledVector(dir,dist);
+  controls.target.copy(center);
+  controls.update();
+
+  // Save initial pose to restore after assemble
+  initCamPos = camera.position.clone();
+  initTarget = controls.target.clone();
+
+  // Build label anchors — average bbox center of each label's nodes
+  const labelLayer = document.getElementById('label-layer');
+  labelAnchors = LABELS.map(def => {
+    const center = new THREE.Vector3();
+    let count = 0;
+    def.nodes.forEach(name => {
+      if (nodeMap[name]) {
+        const b = new THREE.Box3().setFromObject(nodeMap[name]);
+        center.add(b.getCenter(new THREE.Vector3()));
+        count++;
+      }
+    });
+    if (count) center.divideScalar(count);
+    const el = document.createElement('div');
+    el.className = 'part-label';
+    el.innerHTML = `<span class="part-label-dot"></span><span class="part-label-text">${def.name}</span>`;
+    labelLayer.appendChild(el);
+    return { anchor: center, el, nodes: def.nodes };
+  });
+
+  document.getElementById('status').textContent='Drag to orbit · scroll to zoom';
+  document.getElementById('btn').disabled=false;
+
+  // Click-to-identify
+  const raycaster=new THREE.Raycaster();
+  const mouse=new THREE.Vector2();
+  canvas.addEventListener('click', e=>{
+    const rect=canvas.getBoundingClientRect();
+    mouse.x=((e.clientX-rect.left)/W)*2-1;
+    mouse.y=-((e.clientY-rect.top)/H)*2+1;
+    raycaster.setFromCamera(mouse,camera);
+    const hits=raycaster.intersectObjects(gltf.scene.children,true);
+    if(!hits.length) return;
+    let obj=hits[0].object;
+    while(obj.parent && !OFFSETS[obj.name]) obj=obj.parent;
+    document.getElementById('status').textContent='Clicked: '+obj.name+' (uuid:'+obj.uuid.slice(0,6)+')';
+  });
+}, xhr=>{
+  const pct=xhr.loaded&&xhr.total ? Math.round(xhr.loaded/xhr.total*100) : '…';
+  document.getElementById('status').textContent=`Loading ${pct}%`;
+});
+
+function animateTo(toExploded){
+  if(animating) return;
+  animating=true;
+  const nodes=Object.entries(nodeMap);
+  const starts=nodes.map(([,n])=>n.position.clone());
+  const targets=nodes.map(([name])=>{
+    const off=OFFSETS[name]||[0,0,0];
+    return toExploded ? new THREE.Vector3(...off) : new THREE.Vector3(0,0,0);
+  });
+  // Compute assembled and exploded camera distances upfront
+  const boxAssembled=new THREE.Box3(); Object.values(nodeMap).forEach(n=>boxAssembled.expandByObject(n));
+  const assembledCenter=boxAssembled.getCenter(new THREE.Vector3());
+  const fovRad=camera.fov*Math.PI/180;
+  const assembledDist=(boxAssembled.getSize(new THREE.Vector3()).length()/2)/Math.tan(fovRad/2)*1.2;
+  const explodedSize=new THREE.Vector3(...Object.values(OFFSETS).reduce(
+    (acc,o)=>[Math.max(acc[0],Math.abs(o[0])),Math.max(acc[1],Math.abs(o[1])),Math.max(acc[2],Math.abs(o[2]))],
+    [0,0,0]
+  )).length()*2 + boxAssembled.getSize(new THREE.Vector3()).length();
+  const explodedDist=(explodedSize/2)/Math.tan(fovRad/2)*1.1;
+  const startDist=toExploded ? assembledDist : explodedDist;
+  const endDist  =toExploded ? explodedDist  : assembledDist;
+  const dir=camera.position.clone().sub(controls.target).normalize();
+  const camStart=camera.position.clone();
+  const camEnd=toExploded
+    ? assembledCenter.clone().addScaledVector(dir, endDist)
+    : initCamPos.clone();
+
+  const t0=performance.now(), DUR=650;
+  (function step(now){
+    const t=Math.min((now-t0)/DUR,1);
+    const e=t<0.5?2*t*t:-1+(4-2*t)*t;
+    nodes.forEach(([,n],i)=>n.position.lerpVectors(starts[i],targets[i],e));
+    camera.position.lerpVectors(camStart,camEnd,e);
+    controls.target.lerpVectors(
+      toExploded ? initTarget : assembledCenter,
+      toExploded ? assembledCenter : initTarget,
+      e
+    );
+    controls.update();
+    if(t<1) requestAnimationFrame(step);
+    else {
+      animating=false;
+      if(toExploded) setTimeout(()=>labelAnchors.forEach(({el})=>el.classList.add('visible')),80);
+      else labelAnchors.forEach(({el})=>el.classList.remove('visible'));
+    }
+  })(t0);
+}
+
+const btn=document.getElementById('btn');
+btn.disabled=true;
+btn.addEventListener('click',()=>{
+  exploded=!exploded;
+  animateTo(exploded);
+  btn.textContent=exploded?'Assemble':'Explode View';
+  btn.className=exploded?'out':'';
+});
+
+const W_=canvas.clientWidth||700, H_=canvas.clientHeight||700;
+(function render(){
+  requestAnimationFrame(render);
+  controls.update();
+  renderer.render(scene,camera);
+  // Project label anchors to screen
+  if(labelAnchors.length){
+    const W=canvas.clientWidth, H=canvas.clientHeight;
+    labelAnchors.forEach(({anchor,el,nodes})=>{
+      const node=nodeMap[nodes[0]];
+      const worldPos=anchor.clone();
+      if(node) worldPos.add(node.position);
+      const ndc=worldPos.clone().project(camera);
+      if(ndc.z>1){el.style.display='none';return;}
+      el.style.display='flex';
+      el.style.left=((ndc.x*0.5+0.5)*W)+'px';
+      el.style.top=((-ndc.y*0.5+0.5)*H)+'px';
+    });
+  }
+})();
+</script>
+</body>
+</html>

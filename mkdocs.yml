@@ -1,0 +1,70 @@
+site_name: ModPack
+site_url: https://modpack-robotics.github.io/docs/
+docs_dir: docs
+site_dir: site/docs
+
+# Header repo link (top-right corner on every docs page).
+repo_url: https://github.com/citronCode/modpack
+repo_name: ModPack
+edit_uri: ""
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+  palette:
+    primary: custom
+  homepage: /
+  features:
+    - navigation.sections
+    - navigation.top
+    - toc.integrate
+    - search.suggest
+    - content.code.copy
+
+plugins:
+  - search
+  - macros
+
+# Single source of truth for links into the code repo. Used in pages as {{ repo_blob }}.
+extra:
+  repo_blob: "https://github.com/citronCode/modpack/blob/main"
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/slideshow.js
+  - javascripts/mathjax.js
+  - javascripts/model-viewer.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
+nav:
+  - Home: index.md
+  - Bill of Materials: bom.md
+  - Assembly:
+    - Overview: assembly/index.md
+    - Backpack Build: assembly/backpack.md
+    - Backpack Wiring: assembly/wiring.md
+    - Arm Integration: assembly/arms.md
+  - Software:
+    - Overview: software/index.md
+    - Configuration: software/configuration.md
+    - Modules: software/modules.md
