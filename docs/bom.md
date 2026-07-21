@@ -80,3 +80,14 @@
 | <div class="bom-item" id="fr12-bracket-kit"><a href="../images/bom/fr12.png"><img src="../images/bom/fr12.png"></a><span>FR12</span></div> | $46.69 [[Robotis](https://www.robotis.us/fr12-h101k-set/)] | 1 | $46.69 |
 
 **Subtotal: $3,492.96**
+
+---
+
+### Off-the-Shelf Devices
+
+Required only for their respective modules; not included in the build subtotals above since many users already own them.
+
+| Item | Unit Cost | Qty | Total | Notes |
+|------|-----------|-----|-------|-------|
+| <div class="bom-item bom-item-lg" id="apple-vision-pro"><a href="../images/bom/apple-vision-pro.jpg"><img src="../images/bom/apple-vision-pro.jpg"></a><span>Apple Vision Pro</span></div> | $3,699.00 [[Apple](https://www.apple.com/apple-vision-pro/)] | 1 | $3,699.00 | Head-tracking module |
+| <div class="bom-item bom-item-lg" id="iphone"><a href="../images/bom/iphone-17e.jpg"><img src="../images/bom/iphone-17e.jpg"></a><span>iPhone</span></div> | from $599.00 [[Apple](https://www.apple.com/shop/buy-iphone/iphone-17e)] | 1 | $599.00 | Base-control module; any recent iPhone works (mounts on the backpack phone mount) |
