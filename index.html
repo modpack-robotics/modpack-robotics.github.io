@@ -17,11 +17,16 @@
     <script data-goatcounter="https://modpack-robotics.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 
+    <meta name="description"
+        content="ModPack is a modular, extensible teleoperation system for bimanual mobile manipulation, built around a wearable backpack with plug-and-play modules for joint-space arm control with haptic feedback, mobile-base control, and active perception. Open-source hardware and software." />
     <meta property="og:url" content="https://modpack-robotics.github.io/" />
+    <!-- og_card.png backpack artwork: Twemoji (jdecked/twemoji), CC-BY 4.0 -->
+    <meta property="og:image" content="https://modpack-robotics.github.io/images/og_card.png" />
     <meta property="og:type" content="website" />
     <meta property="og:title"
         content="ModPack: An Extensible Teleoperation Interface for Bimanual Mobile Manipulation" />
-    <meta property="og:description" content="" />
+    <meta property="og:description"
+        content="ModPack is a modular, extensible teleoperation system for bimanual mobile manipulation, built around a wearable backpack with plug-and-play modules for joint-space arm control with haptic feedback, mobile-base control, and active perception. Open-source hardware and software." />
 
     <style>
         * {
@@ -102,9 +107,11 @@
             margin: 0 auto 1.5em;
         }
 
-        #hero .teaser img {
+        #hero .teaser img,
+        #hero .teaser video {
             width: 100%;
             border-radius: 6px;
+            display: block;
         }
 
         #hero .abstract {
@@ -541,13 +548,17 @@
                 <span class="hero-btn-icon"><i class="fa fa-file-pdf-o"></i></span>
                 Paper
             </a>
-            <a href="https://github.com/citronCode/modpack" class="hero-btn">
+            <a href="https://github.com/real-stanford/modpack" class="hero-btn">
                 <span class="hero-btn-icon"><i class="fa fa-github"></i></span>
                 Code
             </a>
         </div>
         <div class="teaser">
-            <img src="images/teaser_v4.png" alt="ModPack teaser">
+            <video autoplay muted loop playsinline controls poster="images/teaser_v4.png"
+                aria-label="ModPack teaser video">
+                <source src="videos/teaser.mp4" type="video/mp4">
+                <img src="images/teaser_v4.png" alt="ModPack teaser">
+            </video>
         </div>
         <div class="abstract">
             Existing teleoperation systems are often tailored to specific robot hardware and task domains, limiting
@@ -633,7 +644,7 @@
                     The choice for the backpack to be fabricated in two parts is such that it can be easily 3D printed.
                 </p>
                 <p style="font-size:0.78em;color:#999;margin:auto 0 0;padding-top:0.5em;border-top:1px solid #f0f0f0;">
-                    Hardware &amp; software will be open-sourced.
+                    Hardware &amp; software are open-sourced.
                 </p>
             </div>
         </div>
@@ -671,7 +682,7 @@
                     <dt>Structure</dt>   <dd>3D-printed PLA</dd>
                 </dl>
                 <p style="font-size:0.78em;color:#999;margin:auto 0 0;padding-top:0.5em;border-top:1px solid #f0f0f0;">
-                    Hardware &amp; software will be open-sourced.
+                    Hardware &amp; software are open-sourced.
                 </p>
             </div>
         </div>

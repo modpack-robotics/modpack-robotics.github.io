@@ -4,7 +4,7 @@ docs_dir: docs
 site_dir: site/docs
 
 # Header repo link (top-right corner on every docs page).
-repo_url: https://github.com/citronCode/modpack
+repo_url: https://github.com/real-stanford/modpack
 repo_name: ModPack
 edit_uri: ""
 
@@ -31,7 +31,7 @@ plugins:
 
 # Single source of truth for links into the code repo. Used in pages as {{ repo_blob }}.
 extra:
-  repo_blob: "https://github.com/citronCode/modpack/blob/main"
+  repo_blob: "https://github.com/real-stanford/modpack/blob/main"
 
 markdown_extensions:
   - admonition

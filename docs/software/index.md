@@ -50,7 +50,7 @@ The Mini PC and the robot PC must be on the same network. For best performance, 
 
 ### ModPack Software
 
-Clone [the repo](https://github.com/citronCode/modpack) and create the conda environment:
+Clone [the repo](https://github.com/real-stanford/modpack) and create the conda environment:
 
 ```bash
 conda env create -f environment.yaml

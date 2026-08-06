@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://modpack-robotics.github.io/sitemap.xml
+Sitemap: https://modpack-robotics.github.io/docs/sitemap.xml
