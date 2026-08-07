@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎒</text></svg>">
+    <!-- Indexable favicon (Google can't use data: URIs); Twemoji backpack, CC-BY 4.0 -->
+    <link rel="icon" href="images/favicon.png" type="image/png" sizes="96x96">
 
 
     <!-- GoatCounter analytics -->
@@ -21,6 +23,14 @@
         content="ModPack is a modular, extensible teleoperation system for bimanual mobile manipulation, built around a wearable backpack with plug-and-play modules for joint-space arm control with haptic feedback, mobile-base control, and active perception. Open-source hardware and software." />
     <meta property="og:url" content="https://modpack-robotics.github.io/" />
     <meta name="google-site-verification" content="R1KWEBw9rZ_i2Kha604QlF9768U3-Yl0bACMAfIZ_Bs" />
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "ModPack",
+        "url": "https://modpack-robotics.github.io/"
+    }
+    </script>
     <!-- og_card.png backpack artwork: Twemoji (jdecked/twemoji), CC-BY 4.0 -->
     <meta property="og:image" content="https://modpack-robotics.github.io/images/og_card.png" />
     <meta property="og:type" content="website" />
@@ -555,7 +565,7 @@
             </a>
         </div>
         <div class="teaser">
-            <video autoplay muted loop playsinline controls poster="images/teaser_v4.png"
+            <video autoplay muted loop playsinline controls poster="videos/posters/teaser.jpg"
                 aria-label="ModPack teaser video">
                 <source src="videos/teaser.mp4" type="video/mp4">
                 <img src="images/teaser_v4.png" alt="ModPack teaser">
