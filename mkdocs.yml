@@ -1,5 +1,6 @@
 site_name: ModPack
 site_url: https://modpack-robotics.github.io/docs/
+site_description: Documentation for ModPack, an open-source teleoperation backpack for bimanual mobile robots. Bill of materials, assembly guides, and software setup.
 docs_dir: docs
 site_dir: site/docs
 

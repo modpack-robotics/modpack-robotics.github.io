@@ -1,3 +1,7 @@
+---
+description: "Overview and installation of the ModPack software stack: bridge, modules, and orchestration. Detailed reference docs live in the GitHub repo."
+---
+
 # Software Overview
 
 ModPack software is built around three parts:

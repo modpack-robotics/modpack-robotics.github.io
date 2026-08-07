@@ -1,3 +1,7 @@
+---
+description: "Build and use ModPack: bill of materials, assembly guides, and software setup for the open-source robot teleoperation backpack."
+---
+
 # ModPack
 
 ![ModPack](images/arms_teleop_photo.jpg){ .center width=700 }

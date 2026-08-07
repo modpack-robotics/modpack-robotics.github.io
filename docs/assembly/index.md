@@ -1,3 +1,7 @@
+---
+description: Step-by-step assembly guides for the ModPack backpack and leader arms, from 3D printing through wiring and integration.
+---
+
 # Assembly Overview
 
 ![Assembly overview](../images/assembly_overview.png)

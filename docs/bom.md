@@ -1,3 +1,7 @@
+---
+description: Full parts list for building the ModPack teleoperation backpack and leader arms, with pricing and vendor links.
+---
+
 # Bill of Materials
 
 
